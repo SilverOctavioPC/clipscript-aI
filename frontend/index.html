@@ -1,13 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+
+    <!-- SEO Meta Tags -->
+    <title>ClipScript AI — Transcripción Automática de Videos con IA</title>
+    <meta name="description" content="Transcribe automáticamente videos de YouTube, TikTok y Facebook con Inteligencia Artificial. Obtén texto estructurado con timestamps usando OpenAI Whisper." />
+    <link rel="canonical" href="http://localhost:5173/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://localhost:5173/" />
+    <meta property="og:title" content="ClipScript AI — Transcripción Automática de Videos con IA" />
+    <meta property="og:description" content="Convierte cualquier video de redes sociales en texto estructurado con IA. Perfecto para creadores de contenido." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="ClipScript AI" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ClipScript AI — Transcripción Automática de Videos con IA" />
+    <meta name="twitter:description" content="Convierte cualquier video de redes sociales en texto estructurado con IA." />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Security Headers (meta equivalent) -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">
+      Saltar al contenido principal
+    </a>
+
+    <div id="root">
+      <!-- SEO fallback: hidden from users, readable by crawlers in HTML source. React replaces this entirely on mount. -->
+      <div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">
+        <main id="main-content">
+          <h1>ClipScript AI — Transcripción Automática de Videos mediante Inteligencia Artificial</h1>
+          <p>ClipScript AI es una plataforma web diseñada para transcribir automáticamente videos de redes sociales como YouTube, TikTok y Facebook. La herramienta extrae el audio del video y lo convierte en texto estructurado utilizando el modelo de Inteligencia Artificial Whisper desarrollado por OpenAI.</p>
+
+          <section>
+            <h2>Características principales de ClipScript AI</h2>
+            <p>Nuestra herramienta de transcripción automática genera texto preciso a partir de cualquier video en línea. Simplemente pega el enlace del video y obtén la transcripción completa en segundos, incluyendo marcas de tiempo detalladas para cada segmento del audio procesado.</p>
+            <p>La plataforma es compatible además de las principales redes sociales como YouTube, TikTok, Facebook e Instagram. Resulta ideal para creadores de contenido, editores de video, periodistas, investigadores y cualquier persona que necesite subtítulos rápidos y precisos para sus proyectos audiovisuales.</p>
+
+            <h2>¿Cómo funciona la transcripción?</h2>
+            <p>El proceso es sencillo y rápido: copia la URL del video que deseas transcribir y pégala en el campo de entrada. El sistema descarga el audio automáticamente usando yt-dlp, lo procesa y optimiza a través de FFmpeg, y finalmente lo analiza utilizando el modelo Whisper de OpenAI. El resultado incluye el texto completo de la transcripción junto a segmentos individuales marcados temporalmente.</p>
+
+            <h2>Tecnología de vanguardia al servicio de la productividad</h2>
+            <p>ClipScript AI integra tecnologías modernas tanto en el frontend como en el backend. La interfaz de usuario está construida utilizando React, TypeScript, Vite y Tailwind CSS, ofreciendo una experiencia visual fluida y responsive. El servidor backend utiliza Python junto a FastAPI para procesar las solicitudes de manera asíncrona y eficiente.</p>
+            <p>El motor de transcripción se basa en OpenAI Whisper, un modelo de inteligencia artificial entrenado para reconocer y transcribir audio en múltiples idiomas. Esta combinación de tecnologías garantiza resultados de alta calidad, tiempos de respuesta optimizados y una experiencia de usuario excepcional en cada transcripción realizada.</p>
+          </section>
+
+          <nav aria-label="Enlaces del sitio">
+            <a href="https://github.com/SilverOctavioPC/clipscript-aI">Repositorio en GitHub</a>
+          </nav>
+        </main>
+      </div>
+    </div>
+
+    <!-- Fallback for non-JS -->
+    <noscript>
+      <div style="text-align:center;padding:2rem;font-family:sans-serif;">
+        <p><strong>ClipScript AI</strong> — Esta aplicación requiere JavaScript para funcionar correctamente.</p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -55,7 +55,7 @@ export function Home() {
         </div>
       </header>
 
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+      <main id="main-content" className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
             Transcribe tu contenido en <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">segundos</span>
