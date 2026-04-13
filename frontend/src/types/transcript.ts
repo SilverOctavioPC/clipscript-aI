@@ -12,3 +12,16 @@ export interface TranscriptResponse {
 export interface TranscribeRequest {
   url: string;
 }
+
+export interface VideoFormat {
+  height: number;
+  resolutionText: string;
+  approxMb: number | null;
+}
+
+export interface VideoInfoResponse {
+  title: string;
+  duration: number;
+  thumbnail: string;
+  formats: VideoFormat[];
+}

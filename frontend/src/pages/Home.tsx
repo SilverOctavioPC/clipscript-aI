@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { VideoInput } from '../components/VideoInput';
+import { DownloadAnalyzer } from '../components/DownloadAnalyzer';
 import { Loading } from '../components/Loading';
 import { TranscriptResult } from '../components/TranscriptResult';
 import { api } from '../services/api';
 import type { TranscriptResponse } from '../types/transcript';
-import { AlertCircle, Waves, Cpu } from 'lucide-react';
+import { AlertCircle, Waves, Cpu, Download, FileText } from 'lucide-react';
 
 export function Home() {
+  const [activeTab, setActiveTab] = useState<'transcribe' | 'download'>('transcribe');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,14 +22,47 @@ export function Home() {
     try {
       const result = await api.transcribeVideo(url);
       setTranscript(result);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error procesando video:', err);
+      const errorMsg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
       setError(
-        err.response?.data?.detail || 
+        errorMsg || 
         'Ocurrió un error inesperado al intentar transcribir el video. Revisa el enlace e inténtalo nuevamente.'
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDownload = async (url: string, quality?: string, videoTitle?: string) => {
+    setIsDownloading(true);
+    setError(null);
+    setTranscript(null); // Clear previous transcripts if any
+
+    try {
+      const blob = await api.downloadVideo(url, quality || "max");
+      
+      // Clean up title for file name (allows Spanish chars)
+      const cleanTitle = videoTitle ? videoTitle.replace(/[^\w\s\u00C0-\u017F-]/gi, '').trim().substring(0, 50) : 'video_descargado';
+      const fileExt = quality === 'audio' ? 'mp3' : 'mp4';
+      
+      // Create a temporary link to download the file
+      const urlObject = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = urlObject;
+      link.download = `${cleanTitle}.${fileExt}`;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(urlObject);
+    } catch (err) {
+      console.error('Error descargando video:', err);
+      const errorMsg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      setError(errorMsg || 'Error en la descarga. Puede que el video sea muy pesado o el enlace inválido.');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -56,18 +92,54 @@ export function Home() {
       </header>
 
       <main id="main-content" className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-12">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
-            Transcribe tu contenido en <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">segundos</span>
+            {activeTab === 'transcribe' ? (
+              <>Transcribe tu contenido en <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">segundos</span></>
+            ) : (
+              <>Descarga videos en su <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">máxima calidad</span></>
+            )}
           </h1>
           <p className="text-lg md:text-xl text-slate-400 leading-relaxed font-light">
-            Convierte cualquier video de redes sociales en texto estructurado. 
-            Perfecto para creadores, editores y creadores de contenido que necesitan 
-            subtítulos rápidos y precisos.
+            {activeTab === 'transcribe' 
+              ? 'Convierte cualquier video de redes sociales en texto estructurado. Perfecto para creadores y editores.'
+              : 'Guarda videos completos de YouTube, TikTok o Facebook directamente a tu dispositivo.'}
           </p>
         </div>
 
-        <VideoInput onSubmit={handleTranscribe} isLoading={isLoading} />
+        <div className="max-w-xs mx-auto mb-8 bg-slate-800/50 p-1.5 rounded-2xl flex justify-between border border-slate-700/50 relative z-20">
+          <button
+            onClick={() => { setActiveTab('transcribe'); setError(null); }}
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+              activeTab === 'transcribe' 
+                ? 'bg-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+            }`}
+          >
+            <FileText className="h-4 w-4" />
+            Transcribir
+          </button>
+          <button
+            onClick={() => { setActiveTab('download'); setError(null); }}
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+              activeTab === 'download' 
+                ? 'bg-indigo-600 text-white shadow-lg' 
+                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+            }`}
+          >
+            <Download className="h-4 w-4" />
+            Descargar
+          </button>
+        </div>
+
+        {activeTab === 'transcribe' ? (
+          <VideoInput onSubmit={handleTranscribe} isLoading={isLoading} />
+        ) : (
+          <DownloadAnalyzer 
+            onDownload={handleDownload} 
+            isDownloadingGlobal={isDownloading} 
+          />
+        )}
 
         {error && (
           <div className="max-w-2xl mx-auto mt-8 bg-red-500/10 border border-red-500/20 rounded-2xl p-6 flex flex-col items-center text-center space-y-3">
@@ -79,7 +151,7 @@ export function Home() {
           </div>
         )}
 
-        {isLoading && <Loading />}
+        {(isLoading || isDownloading) && <Loading />}
 
         {transcript && !isLoading && !error && (
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">

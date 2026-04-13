@@ -34,3 +34,11 @@ out/
 *.wav
 *.mkv
 *.webm
+
+# Squirrel audit
+squirrel.toml
+audit_report*.txt
+
+# Temporales
+temp/
+backend/temp/

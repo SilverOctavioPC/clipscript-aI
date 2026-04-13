@@ -1,12 +1,14 @@
 import whisper
 import os
+import torch
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Load the model once when the module is imported to save time on subsequent requests
-# 'base' is a good balance between speed and accuracy for an MVP.
-# Available models: tiny, base, small, medium, large, large-v2, large-v3
+# Using 'small' model. It's an excellent balance of high precision for Spanish/English and speed.
 try:
-    print("Loading Whisper model (base)...")
-    model = whisper.load_model("base")
+    print(f"Loading Whisper model ('small') on [{device.upper()}]...")
+    model = whisper.load_model("small", device=device)
     print("Whisper model loaded successfully.")
 except Exception as e:
     print(f"Error loading Whisper model: {e}")
@@ -24,8 +26,9 @@ def transcribe_audio(file_path: str) -> dict:
         raise RuntimeError("El modelo Whisper no se pudo cargar. Revisa los logs del servidor.")
 
     try:
-        # fp16=False is often needed for CPU inference to avoid warnings/errors
-        result = model.transcribe(file_path, fp16=False)
+        # fp16 (media precision) is very fast on CUDA, but typically disabled on CPU
+        use_fp16 = True if device == "cuda" else False
+        result = model.transcribe(file_path, fp16=use_fp16)
         
         # Format the segments map to ensure it matches our frontend interface
         segments = []
